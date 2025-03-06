@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "comment")
@@ -18,6 +20,8 @@ public class Comment {
     private int id;
 
     private String text;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 
     @ManyToOne
     @JoinColumn(name = "task_id")

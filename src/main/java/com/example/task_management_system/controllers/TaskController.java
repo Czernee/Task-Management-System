@@ -4,6 +4,7 @@ import com.example.task_management_system.dto.TaskDto;
 import com.example.task_management_system.dto.TaskFilter;
 import com.example.task_management_system.dto.TaskResponse;
 import com.example.task_management_system.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    private TaskService taskService;
+    private final TaskService taskService;
 
     @Autowired
     public TaskController(TaskService taskService) {
@@ -22,10 +23,9 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TaskDto> createTask(@RequestParam int authorId,
-                                              @RequestParam(required = false) int executorId,
-                                              @RequestBody TaskDto taskDto) {
-        return new ResponseEntity<>(taskService.createTask(authorId, executorId, taskDto), HttpStatus.CREATED);
+    public ResponseEntity<TaskDto> createTask(@RequestParam(required = false) int executorId,
+                                              @Valid @RequestBody TaskDto taskDto) {
+        return new ResponseEntity<>(taskService.createTask(executorId, taskDto), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -49,7 +49,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDto> updateTask(@PathVariable("id") int taskId, @RequestBody TaskDto taskDto) {
+    public ResponseEntity<TaskDto> updateTask(@PathVariable("id") int taskId, @Valid @RequestBody TaskDto taskDto) {
         return new ResponseEntity<>(taskService.updateTask(taskId, taskDto), HttpStatus.OK);
     }
 

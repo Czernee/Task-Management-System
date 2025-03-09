@@ -15,16 +15,20 @@ public class Task {
 
     private String title;
     private String description;
-    private String status;
-    private String priority;
+
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private TaskPriority priority;
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private User author;
+    private UserEntity author;
 
     @ManyToOne
     @JoinColumn(name = "executor_id")
-    private User executor;
+    private UserEntity executor;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;

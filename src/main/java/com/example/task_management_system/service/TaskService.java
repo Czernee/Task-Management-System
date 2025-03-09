@@ -5,7 +5,7 @@ import com.example.task_management_system.dto.TaskFilter;
 import com.example.task_management_system.dto.TaskResponse;
 
 public interface TaskService {
-    TaskDto createTask(int authorId, int executorId, TaskDto taskDto);
+    TaskDto createTask(int executorId, TaskDto taskDto);
     TaskResponse getAllTasks(int pageNo, int pageSize, TaskFilter taskFilter);
     TaskDto getTaskById(int taskId);
     TaskDto updateTask(int taskId, TaskDto taskDto);

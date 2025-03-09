@@ -1,2 +1,19 @@
-package com.example.task_management_system.dto;public class CommentResponse {
+package com.example.task_management_system.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CommentResponse {
+    private List<CommentDto> content;
+    private int pageNo;
+    private int pageSize;
+    private long totalElements;
+    private int totalPages;
+    private boolean last;
 }

@@ -8,6 +8,11 @@ import com.example.task_management_system.models.UserEntity;
 import com.example.task_management_system.repository.RoleRepository;
 import com.example.task_management_system.repository.UserRepository;
 import com.example.task_management_system.security.JwtGenerator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Auth Controller", description = "API для аутентификации")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -41,8 +47,14 @@ public class AuthController {
         this.jwtGenerator = jwtGenerator;
     }
 
+    @Operation(summary = "Регистрация пользователя",
+            description = "Метод для регистрации нового пользователя.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Пользователь зарегистрирован успешно"),
+            @ApiResponse(responseCode = "400", description = "Аккаунт с таким email уже существует")
+    })
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             return new ResponseEntity<>("Account with this email already exists.", HttpStatus.BAD_REQUEST);
         }
@@ -64,8 +76,14 @@ public class AuthController {
         return new ResponseEntity<>("User registered successfully.", HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Вход в систему",
+            description = "Метод для входа в систему и получения токена доступа.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешный вход"),
+            @ApiResponse(responseCode = "401", description = "Неверные учетные данные")
+    })
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto){
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

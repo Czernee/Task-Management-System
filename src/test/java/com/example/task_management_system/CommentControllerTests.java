@@ -1,7 +1,13 @@
-package com.example.task_management_system.controllers;
+package com.example.task_management_system;
 
+import com.example.task_management_system.controllers.CommentController;
 import com.example.task_management_system.dto.CommentDto;
 import com.example.task_management_system.dto.CommentResponse;
+import com.example.task_management_system.dto.TaskDto;
+import com.example.task_management_system.models.Comment;
+import com.example.task_management_system.models.Task;
+import com.example.task_management_system.models.TaskPriority;
+import com.example.task_management_system.models.TaskStatus;
 import com.example.task_management_system.service.CommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
@@ -13,10 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
@@ -71,24 +80,17 @@ public class CommentControllerTests {
     }
 
     @Test
-    public void CommentController_GetCommentsByTaskId_ReturnResponseDto() throws Exception {
-        CommentResponse commentResponse = CommentResponse.builder()
-                .pageSize(10)
-                .pageNo(1)
-                .last(true)
-                .content(Collections.singletonList(commentDto)).build();
+    public void CommentController_CommentDetail_ReturnCommentDto() throws Exception {
+        when(commentService.getCommentById(1, 1)).thenReturn(commentDto);
 
-        when(commentService.getCommentsByTaskId(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString(), ArgumentMatchers.any())).thenReturn(commentResponse);
-
-        ResultActions response = mockMvc.perform(get("/api/tasks/1/comments")
+        ResultActions response = mockMvc.perform(get("/api/tasks/1/comments/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("pageNo", "1")
-                .param("pageSize", "10"));
+                .content(objectMapper.writeValueAsString(commentDto)));
 
         response.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content", hasSize(1)));
-    }
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text", CoreMatchers.is(commentDto.getText())));
 
+    }
 
     @Test
     public void CommentController_DeleteComment_ReturnString() throws Exception {

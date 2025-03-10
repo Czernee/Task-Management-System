@@ -1,5 +1,6 @@
-package com.example.task_management_system.controllers;
+package com.example.task_management_system;
 
+import com.example.task_management_system.controllers.TaskController;
 import com.example.task_management_system.dto.TaskDto;
 import com.example.task_management_system.models.Task;
 import com.example.task_management_system.models.TaskPriority;
@@ -23,6 +24,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,5 +84,16 @@ public class TaskControllerTests {
                 .content(objectMapper.writeValueAsString(invalidTaskDto)));
 
         response.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void TaskController_DeleteTask_ReturnString() throws Exception {
+        int taskId = 1;
+        doNothing().when(taskService).deleteTask(taskId);
+
+        ResultActions response = mockMvc.perform(delete("/api/tasks/1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

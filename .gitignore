@@ -1,6 +1,12 @@
 HELP.md
-target/
-!target/task-management-system-0.0.1-SNAPSHOT.jar
+target/classes
+target/generated-sources
+target/generated-test-sources
+target/maven-archiver
+target/maven-status
+target/surefire-reports
+target/test-classes
+target/task-management-system-0.0.1-SNAPSHOT.jar.original
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

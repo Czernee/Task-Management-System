@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 @Service
 public class TaskServiceImpl implements TaskService {
 
-    private TaskRepository taskRepository;
-    private UserRepository userRepository;
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository) {
@@ -96,11 +96,11 @@ public class TaskServiceImpl implements TaskService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity currentUser = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (!currentUser.getRole().getName().equals("ADMIN")) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task with this ID can not be found"));
+
+        if (!currentUser.getRole().getName().equals("ADMIN") && currentUser.getId() != task.getExecutor().getId()) {
             throw new AccessDeniedException("Only admins or executors can update tasks");
         }
-
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task with this ID can not be found"));
 
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
